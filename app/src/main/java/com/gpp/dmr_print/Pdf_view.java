@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
@@ -23,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.tscdll.TSCActivity;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
@@ -43,9 +45,11 @@ import com.zebra.sdk.printer.ZebraPrinterLanguageUnknownException;
 import com.zebra.sdk.printer.internal.PrinterConnectionOutputStream;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -71,8 +75,8 @@ import honeywell.printer.configuration.ez.SerialNumber;
 
 public class Pdf_view extends AppCompatActivity implements Runnable {
 
-    private static final String RECIBIRFOLDER= "ENVIANDO_FOLDER";
-    private static final String RECIBIRINTENT= "ENVIANDO_INTENT";
+    private static final String RECIBIRFOLDER = "ENVIANDO_FOLDER";
+    private static final String RECIBIRINTENT = "ENVIANDO_INTENT";
     private Toast toast = null;
     Toolbar toolbar;
     private String m_printerMode;
@@ -108,8 +112,9 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
     private int contador = 0;
     private PDFView pdfView;
     private File myFile = null;
-
-    DMRPrintSettings g_appSettings = new DMRPrintSettings("", "", 0, "/", "", 0, 0, 0, 0, 0, 0, 0, "", "",false);
+    TSCActivity TscDll = new TSCActivity();
+    DMRPrintSettings g_appSettings = new DMRPrintSettings("", "", 0, "/", "", 0, 0, 0, 0, 0, 0, 0, "", "", false);
+    int heigth_calculator, wigth_calculator, densidad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +135,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
             @Override
             public void onClick(View v) {
 
-            preparardocumento(myFile.getAbsolutePath());
+                preparardocumento(myFile.getAbsolutePath());
 
             }
         });
@@ -140,7 +145,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
             @Override
             public void onClick(View v) {
 
-                if (myFile != null){
+                if (myFile != null) {
 
                     File pdfFile = new File(myFile.getAbsolutePath());
                     Intent intent = new Intent(Intent.ACTION_SEND);
@@ -167,27 +172,27 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
 
     }
 
-    private void recibir_pdf_mainactivity(){
+    private void recibir_pdf_mainactivity() {
 
         Intent intentrecibir = getIntent();
 
-        if (intentrecibir!=null){
+        if (intentrecibir != null) {
 
-            if (intentrecibir.getAction().equals(RECIBIRFOLDER)){
+            if (intentrecibir.getAction().equals(RECIBIRFOLDER)) {
 
-                try{
-                    String path= intentrecibir.getExtras().getString("PATH");
-                    myFile =new File(path);
+                try {
+                    String path = intentrecibir.getExtras().getString("PATH");
+                    myFile = new File(path);
                     AbriPdf(myFile);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-            }else if (intentrecibir.getAction().equals(RECIBIRINTENT)){
+            } else if (intentrecibir.getAction().equals(RECIBIRINTENT)) {
                 myFile = (File) intentrecibir.getSerializableExtra("MY_FILE");
                 AbriPdf(myFile);
-            }else{
-                Toast.makeText(Pdf_view.this,"No se de donde recibe",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(Pdf_view.this, "No se de donde recibe", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -198,8 +203,6 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
         super.onPostResume();
         Cargar_Datos_Configuracion();
     }
-
-
 
 
     public void AbriPdf(File bFileeee) {
@@ -215,7 +218,6 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
             Toast.makeText(Pdf_view.this, "Arhivo Dañado", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 
     @Override
@@ -247,7 +249,6 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
         // Showing toast finally
         this.toast.show();
     }
-
 
 
     @Override
@@ -340,7 +341,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
             paramDPL = new ParametersDPL();
             paramExPCL_LP = new ParametersExPCL_LP();
             printData = new byte[]{0};
-           // ICommandBuilder builder;
+            // ICommandBuilder builder;
             switch (m_printerMode) {
 
                 case "Apex":
@@ -414,13 +415,42 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
 
                     mBitmap = generateImageFromPdf(ubicacionarchivo, 0, m_printHeadWidth);
                     if (mBitmap != null) {
-                       byte[] bitmapData = convertTo1BPP(mBitmap, 128);
+                        byte[] bitmapData = convertTo1BPP(mBitmap, 128);
                         Bitmap bitt = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
                         printPhotoFromExternal(bitt);
                     }
 
 
                     break;
+
+                case "TSC":
+
+                    try {
+
+                    mBitmap = generateImageFromPdf(ubicacionarchivo, 0, m_printHeadWidth);
+                    heigth_calculator = (int) (mBitmap.getHeight() / 8);
+                    wigth_calculator = (int) (mBitmap.getWidth() / 8);
+
+                    File f = new File(Environment.getExternalStorageDirectory().getPath() + "/Download/" + "/temp2.BMP");
+                    byte[] bitmapData2 = convertTo1BPP(mBitmap, 128);
+                    ByteArrayInputStream bs = new ByteArrayInputStream(bitmapData2);
+
+                    InputStream is = bs;
+                    int size = is.available();
+                    byte[] buffer = new byte[size];
+                    is.read(buffer);
+                    is.close();
+                    FileOutputStream fos = new FileOutputStream(f);
+                    fos.write(buffer);
+                    fos.close();
+                    PrintBmpTsc();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                    break;
+
 
                 case "BIXOLON":
 
@@ -444,8 +474,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
 
     }
 
-    private void printBitmapBixolon(Bitmap bitmap)
-    {
+    private void printBitmapBixolon(Bitmap bitmap) {
 /*
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = false;
@@ -457,6 +486,36 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
 
         MainActivity.mBixolonLabelPrinter.drawBitmap(bitmap, 0, 0, 576, 50, true);
         MainActivity.mBixolonLabelPrinter.print(1, 1);
+    }
+
+
+    private void PrintBmpTsc() {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+
+                    EnableDialog(true, "Conectando Impresora...", true);
+                    TscDll.openport(m_printerMAC);
+                    TscDll.downloadbmp("temp2.BMP");
+                    TscDll.setup(wigth_calculator, heigth_calculator, 4, densidad, 0, 0, 0);
+                    TscDll.clearbuffer();
+                    TscDll.sendcommand("PUTBMP 10,10,\"temp2.BMP\"\n");
+                    TscDll.printlabel(1, 1);
+                    TscDll.closeport(5000);
+
+                    EnableDialog(false, "Enviando terminando...", false);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    EnableDialog(false, "Enviando terminando...", false);
+                }
+            }
+        };
+
+        thread.start();
+
+
     }
 
 
@@ -477,8 +536,8 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
 
                     ZebraImageAndroid imagenandroid = new ZebraImageAndroid(bbr);
 
-                    int var2=0;
-                    int var3 =0;
+                    int var2 = 0;
+                    int var3 = 0;
                     int iamodificado = (imagenandroid.getWidth() + 7) / 8;
 
                     try {
@@ -675,9 +734,8 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
     }
 
 
-
-
     private String message;
+
     @Override
     public void run() {
 
@@ -727,7 +785,6 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                                 Thread.sleep(100);
                             }
                         }
-
 
 
                         DisplayPrintingStatusMessage("Impresión Exitosa. ");

@@ -153,8 +153,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case STORAGE_PERMISSION_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty.

@@ -74,7 +74,7 @@ private Context context;
                 {
                     File file=files[i];
 
-                    if(file.getPath().endsWith("pdf"))
+                    if(file.getPath().endsWith(".pdf"))
                     {
                         pdfDoc=new PDFDoc();
                         pdfDoc.setName(file.getName());

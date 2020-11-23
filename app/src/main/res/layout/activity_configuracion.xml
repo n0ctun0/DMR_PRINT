@@ -93,6 +93,26 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Densidad" />
+
+            <EditText
+                android:id="@+id/txtdensidad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number"
+                android:text="0" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/actionMode2"
             android:layout_width="wrap_content"

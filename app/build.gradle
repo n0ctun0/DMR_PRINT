@@ -8,8 +8,8 @@ android {
         applicationId "com.gpp.dmr_print"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 10
-        versionName "10.0"
+        versionCode 11
+        versionName "11.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -49,6 +49,6 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation files('libs/ZSDK_ANDROID_API.jar')
     implementation files('libs/BixolonLabelPrinterLibraryV129.jar')
-
+    implementation files('libs/tscsdk.jar')
 
 }

@@ -20,6 +20,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfRenderer;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
@@ -36,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bixolon.labelprinter.BixolonLabelPrinter;
+import com.example.tscdll.TSCActivity;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -64,6 +66,7 @@ import com.zebra.sdk.graphics.internal.ZebraImageAndroid;
 import com.zebra.sdk.printer.internal.PrinterConnectionOutputStream;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -158,7 +161,8 @@ public class Configuracion_Impresora extends AppCompatActivity {
     RadioButton mini_dos;
     RadioButton mini_tres;
 
-
+private int densidad;
+private EditText txtdensidad;
     RadioGroup grupoauto;
     RadioButton auto_no;
     RadioButton auto_si;
@@ -185,8 +189,8 @@ public class Configuracion_Impresora extends AppCompatActivity {
 
     private Bitmap mBitmap = null;
     private File Filetemp = null;
-
-
+    int heigth_calculator, wigth_calculator;
+    TSCActivity TscDll = new TSCActivity();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -231,7 +235,7 @@ public class Configuracion_Impresora extends AppCompatActivity {
         m_configConnectionButton = (Button) findViewById(R.id.configConn_button);
         m_printerModeSpinner = (Spinner) findViewById(R.id.printer_mode_spinner);
 
-
+        txtdensidad = findViewById(R.id.txtdensidad);
         grupohojas = (RadioGroup) findViewById(R.id.grupoimpresion);
         m_unahoja = findViewById(R.id.unahoja);
         m_doshojas = findViewById(R.id.doshojas);
@@ -768,7 +772,40 @@ public class Configuracion_Impresora extends AppCompatActivity {
                         Bitmap bitt = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
                         printPhotoFromExternal(bitt);
                     }
+
+
                     break;
+
+
+                case "TSC":
+
+               try {
+
+                        mBitmap = generateImageFromPdf(f.getPath(), 0, m_printHeadWidth,m_printerMode);
+                        heigth_calculator = (int) (mBitmap.getHeight() / 8);
+                        wigth_calculator = (int) (mBitmap.getWidth() / 8);
+
+                        File f2 = new File(Environment.getExternalStorageDirectory().getPath() + "/Download/" + "/temp2.BMP");
+                        byte[] bitmapData2 = convertTo1BPP(mBitmap, 128);
+                        ByteArrayInputStream bs = new ByteArrayInputStream(bitmapData2);
+
+                        InputStream is = bs;
+                        int size = is.available();
+                        byte[] buffer = new byte[size];
+                        is.read(buffer);
+                        is.close();
+                        FileOutputStream fos = new FileOutputStream(f2);
+                        fos.write(buffer);
+                        fos.close();
+                        PrintBmpTsc();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
+
+
 
                 case "EscPosMobile":
 
@@ -815,7 +852,37 @@ public class Configuracion_Impresora extends AppCompatActivity {
         }
 
     }
-    
+
+    private void PrintBmpTsc() {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+
+                    EnableDialog(true, "Imprimiendo test de prueba", "Imprimiendo");
+                    TscDll.openport(m_printerMAC);
+                    TscDll.downloadbmp("temp2.BMP");
+                    TscDll.setup(wigth_calculator, heigth_calculator, 4, densidad, 0, 0, 0);
+                    TscDll.clearbuffer();
+                    TscDll.sendcommand("PUTBMP 10,10,\"temp2.BMP\"\n");
+                    TscDll.printlabel(1, 1);
+                    TscDll.closeport(5000);
+                    pedirserialequipo();
+                    EnableDialog(false, "Imprimiendo test de prueba", "Imprimiendo");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    EnableDialog(false, "Imprimiendo test de prueba", "Imprimiendo");
+                }
+            }
+        };
+
+        thread.start();
+
+
+    }
+
+
 
     private void printPhotoFromExternal(final Bitmap bbr) {
         new Thread(new Runnable() {
@@ -1059,7 +1126,6 @@ public class Configuracion_Impresora extends AppCompatActivity {
 
     private void tesimpresion() {
 
-
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -1087,7 +1153,6 @@ public class Configuracion_Impresora extends AppCompatActivity {
                             }
 
                             conn.close();
-
                             pedirserialequipo();
 
                         }
