@@ -420,7 +420,6 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                         printPhotoFromExternal(bitt);
                     }
 
-
                     break;
 
                 case "TSC":
