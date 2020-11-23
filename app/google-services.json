@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1015583940380",
+    "firebase_url": "https://dmrprint-3b30a.firebaseio.com",
+    "project_id": "dmrprint-3b30a",
+    "storage_bucket": "dmrprint-3b30a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1015583940380:android:f6949a4ad012a31588e4d9",
+        "android_client_info": {
+          "package_name": "com.gpp.dmr_print"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1015583940380-lbl4mrbd7kqj2dfjdbqa5juok996ttmr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gpp.dmr_print",
+            "certificate_hash": "ed678a08452d2e8a4381f5e9dd281ae8fb5eb863"
+          }
+        },
+        {
+          "client_id": "1015583940380-8ccmmgm8sm7v9639kr4qvcup0upmlcr3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhMRRO5D1h1Tt_JdrVQpFqa0IRx9c7laM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1015583940380-8ccmmgm8sm7v9639kr4qvcup0upmlcr3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
