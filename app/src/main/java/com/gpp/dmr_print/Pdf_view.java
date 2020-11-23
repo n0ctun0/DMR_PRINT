@@ -426,6 +426,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
 
                     try {
 
+
                     mBitmap = generateImageFromPdf(ubicacionarchivo, 0, m_printHeadWidth);
                     heigth_calculator = (int) (mBitmap.getHeight() / 8);
                     wigth_calculator = (int) (mBitmap.getWidth() / 8);
