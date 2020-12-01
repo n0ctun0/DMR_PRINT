@@ -225,7 +225,6 @@ private EditText txtdensidad;
             m_printerMAC = "0";
         }
 
-
         //Inicializar firebase
         initFireBase();
 
