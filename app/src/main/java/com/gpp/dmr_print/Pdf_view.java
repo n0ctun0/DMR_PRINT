@@ -113,7 +113,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
     private PDFView pdfView;
     private File myFile = null;
     TSCActivity TscDll = new TSCActivity();
-    DMRPrintSettings g_appSettings = new DMRPrintSettings("", "", 0, "/", "", 0, 0, 0, 0, 0, 0, 0, "", "", false);
+    DMRPrintSettings g_appSettings = new DMRPrintSettings("", "", 0, "/", "", 0, 0, 0, 0, 0, 0, 0, "", "", false,0);
     int heigth_calculator, wigth_calculator, densidad;
 
     @Override
@@ -287,6 +287,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
             minimizarapp = g_appSettings.getMinimizar();//minimizar app
             imprimirautomaticamente = g_appSettings.getAutomatico();// imprimir automaticamente
             ConfiguracionImpresora = g_appSettings.getEstadoconfiguracion();
+            densidad = g_appSettings.getDensidad();
         } else {
             ConfiguracionImpresora = false;
             m_printerMode = "";
@@ -296,6 +297,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
             cantidaddecopias = 0;// cantidad de copias para imprimir
             minimizarapp = 0;//minimizar app
             imprimirautomaticamente = 0;// imprimir automaticamente
+            densidad = 0;
 
             showToast("No se ha Configurado la impresora");
         }
@@ -425,9 +427,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                 case "TSC":
 
                     try {
-
-
-                    mBitmap = generateImageFromPdf(ubicacionarchivo, 0, m_printHeadWidth);
+                        mBitmap = generateImageFromPdf(ubicacionarchivo, 0, m_printHeadWidth);
                     heigth_calculator = (int) (mBitmap.getHeight() / 8);
                     wigth_calculator = (int) (mBitmap.getWidth() / 8);
 
@@ -502,7 +502,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                     TscDll.clearbuffer();
                     TscDll.sendcommand("PUTBMP 10,10,\"temp2.BMP\"\n");
                     TscDll.printlabel(1, 1);
-                    TscDll.closeport(5000);
+                    TscDll.closeport(500);
 
                     EnableDialog(false, "Enviando terminando...", false);
 

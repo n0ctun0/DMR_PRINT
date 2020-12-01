@@ -47,6 +47,12 @@ public class DMRPrintSettings implements Serializable {
 
 	private int automatico;//2018
 
+	private int densidad;
+
+
+
+
+
 	private String devicename;
 	private String productoid;
 
@@ -59,6 +65,17 @@ public class DMRPrintSettings implements Serializable {
 	public void setEstadoconfiguracion(Boolean estadoconfiguracion) {
 		this.estadoconfiguracion = estadoconfiguracion;
 	}
+
+	public int getDensidad() {
+		return densidad;
+	}
+
+	public void setDensidad(int densidad) {
+		this.densidad = densidad;
+	}
+
+
+
 
 	public String getDevicename() {
 		return devicename;
@@ -195,7 +212,7 @@ public class DMRPrintSettings implements Serializable {
 
 
 	//Constructor
-	public DMRPrintSettings(String ip, String mac, int port, String folderPath, String filePath,int commMethod, int itemIndex, int modeIndex, int action, int action2, int mini, int auto, String device, String id,Boolean estado_configuracion){
+	public DMRPrintSettings(String ip, String mac, int port, String folderPath, String filePath,int commMethod, int itemIndex, int modeIndex, int action, int action2, int mini, int auto, String device, String id,Boolean estado_configuracion,int densi){
 		printerIP = ip;
 		printerMAC = mac;
 		selectedPrinterPort  = port;
@@ -211,6 +228,7 @@ public class DMRPrintSettings implements Serializable {
 		devicename = device;
 		productoid = id;
 		estadoconfiguracion = estado_configuracion;
+		densidad = densi;
 	}
 
 

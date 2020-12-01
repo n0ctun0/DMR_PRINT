@@ -119,6 +119,8 @@ public class Configuracion_Impresora extends AppCompatActivity {
     private String connectionType;
     private int m_printHeadWidth = 384; //572
 
+    private int densidad = 0; //572
+
     private int selectedItemIndex = 0;
 
     private FirebaseAuth firebaseauth;
@@ -160,8 +162,6 @@ public class Configuracion_Impresora extends AppCompatActivity {
     RadioButton mini_uno;
     RadioButton mini_dos;
     RadioButton mini_tres;
-
-private int densidad;
 private EditText txtdensidad;
     RadioGroup grupoauto;
     RadioButton auto_no;
@@ -183,7 +183,7 @@ private EditText txtdensidad;
 
     String ApplicationConfigFilename = "applicationconfigg.dat";
 
-    DMRPrintSettings g_appSettings = new DMRPrintSettings("", "", 0, "/", "", 0, 0, 0, 0, 0, 0, 0, "", "", false);
+    DMRPrintSettings g_appSettings = new DMRPrintSettings("", "", 0, "/", "", 0, 0, 0, 0, 0, 0, 0, "", "", false,0);
 
     final Context c = this;
 
@@ -220,6 +220,7 @@ private EditText txtdensidad;
             m_devicename = g_appSettings.getDevicename();
             m_productoid = g_appSettings.getProductoid();
             estado_configuracion = g_appSettings.getEstadoconfiguracion();
+            densidad = g_appSettings.getDensidad();
         } else {
             m_printerMAC = "0";
         }
@@ -415,7 +416,22 @@ private EditText txtdensidad;
                 // Drawable drawable = getResources().getDrawable(R.drawable.testprint);
                 //mBitmap = ((BitmapDrawable) drawable).getBitmap();
 
-                ValidarSerialMac();
+                if (!txtdensidad.getText().toString().isEmpty()){
+
+
+                    densidad = Integer.parseInt(txtdensidad.getText().toString());
+
+                    if (densidad<=4){
+                        g_appSettings.setDensidad(densidad);
+                        ValidarSerialMac();
+                    }else{
+                        txtdensidad.requestFocus();
+                    }
+
+                }else{
+                    showDialog("No puede dejar la densidad en blanco");
+                }
+
 
             }
 
@@ -862,11 +878,11 @@ private EditText txtdensidad;
                     EnableDialog(true, "Imprimiendo test de prueba", "Imprimiendo");
                     TscDll.openport(m_printerMAC);
                     TscDll.downloadbmp("temp2.BMP");
-                    TscDll.setup(wigth_calculator, heigth_calculator, 4, densidad, 0, 0, 0);
+                    TscDll.setup(wigth_calculator, heigth_calculator, 4, 4, 0, 0, 0);
                     TscDll.clearbuffer();
                     TscDll.sendcommand("PUTBMP 10,10,\"temp2.BMP\"\n");
                     TscDll.printlabel(1, 1);
-                    TscDll.closeport(5000);
+                    TscDll.closeport(500);
                     pedirserialequipo();
                     EnableDialog(false, "Imprimiendo test de prueba", "Imprimiendo");
 
