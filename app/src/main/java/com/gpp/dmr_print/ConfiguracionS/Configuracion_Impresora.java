@@ -119,7 +119,7 @@ public class Configuracion_Impresora extends AppCompatActivity {
     private String connectionType;
     private int m_printHeadWidth = 384; //572
 
-    private int densidad = 0; //572
+    private int densidad = 0; //temperatura
 
     private int selectedItemIndex = 0;
 
@@ -236,6 +236,8 @@ private EditText txtdensidad;
         m_printerModeSpinner = (Spinner) findViewById(R.id.printer_mode_spinner);
 
         txtdensidad = findViewById(R.id.txtdensidad);
+
+        txtdensidad.setText(""+densidad);
         grupohojas = (RadioGroup) findViewById(R.id.grupoimpresion);
         m_unahoja = findViewById(R.id.unahoja);
         m_doshojas = findViewById(R.id.doshojas);
@@ -420,11 +422,11 @@ private EditText txtdensidad;
 
                     densidad = Integer.parseInt(txtdensidad.getText().toString());
 
-                    if (densidad<=4){
+                    if (densidad<=15){
                         g_appSettings.setDensidad(densidad);
                         ValidarSerialMac();
                     }else{
-                        txtdensidad.requestFocus();
+                        showDialog("ERROR : La densidad es de 0 a 15");
                     }
 
                 }else{
@@ -877,11 +879,11 @@ private EditText txtdensidad;
                     EnableDialog(true, "Imprimiendo test de prueba", "Imprimiendo");
                     TscDll.openport(m_printerMAC);
                     TscDll.downloadbmp("temp2.BMP");
-                    TscDll.setup(wigth_calculator, heigth_calculator, 4, 4, 0, 0, 0);
+                    TscDll.setup(wigth_calculator, heigth_calculator, 4, densidad, 0, 0, 0);
                     TscDll.clearbuffer();
                     TscDll.sendcommand("PUTBMP 10,10,\"temp2.BMP\"\n");
                     TscDll.printlabel(1, 1);
-                    TscDll.closeport(500);
+                    TscDll.closeport(5000);
                     pedirserialequipo();
                     EnableDialog(false, "Imprimiendo test de prueba", "Imprimiendo");
 
@@ -889,6 +891,8 @@ private EditText txtdensidad;
                     e.printStackTrace();
                     EnableDialog(false, "Imprimiendo test de prueba", "Imprimiendo");
                 }
+
+                Log.e("DATOS CONFIGURACION:","Mac: " + m_printerMAC + " Ancho: " + wigth_calculator + " Largo: " + heigth_calculator + "Densidad: " + densidad );
             }
         };
 

@@ -498,11 +498,13 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                     EnableDialog(true, "Conectando Impresora...", true);
                     TscDll.openport(m_printerMAC);
                     TscDll.downloadbmp("temp2.BMP");
-                    TscDll.setup(wigth_calculator, heigth_calculator, 4, densidad, 0, 0, 0);
+                    TscDll.setup(wigth_calculator, heigth_calculator, 4, 4, 0, 0, 0);
                     TscDll.clearbuffer();
                     TscDll.sendcommand("PUTBMP 10,10,\"temp2.BMP\"\n");
                     TscDll.printlabel(1, 1);
                     TscDll.closeport(500);
+
+
 
                     EnableDialog(false, "Enviando terminando...", false);
 
@@ -510,6 +512,8 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                     e.printStackTrace();
                     EnableDialog(false, "Enviando terminando...", false);
                 }
+
+                Log.e("DATOS ACTUALES:","Mac: " + m_printerMAC + " Ancho: " + wigth_calculator + " Largo: " + heigth_calculator + "Densidad: " + densidad );
             }
         };
 
